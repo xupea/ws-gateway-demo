@@ -41,15 +41,15 @@ export default function WsDebugger() {
 
   // 订阅
   const TOPICS = [
-    'AvailableBalances',
-    'VaultBalances',
-    'HighrollerHouseBets',
-    'Announcements',
-    'RaceStatus',
-    'FeatureFlag',
-    'Notifications',
-    'HouseBets',
-    'depositBonusTransaction',
+    'ws.available-balances',
+    'ws.vault-balances',
+    'ws.highroller-house-bets',
+    'ws.announcements',
+    'ws.race-status',
+    'ws.feature-flag',
+    'ws.notifications',
+    'ws.house-bets',
+    'ws.deposit-bonus-transaction',
   ];
   const [topic, setTopic] = useState(TOPICS[0]);
 
