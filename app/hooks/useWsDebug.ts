@@ -45,9 +45,10 @@ function generateId(): string {
 
 export interface ConnectOptions {
   wsUrl: string;
-  accessToken: string;
+  authToken?: string;
   language?: string;
   lockdownToken?: string;
+  loggedIn: boolean;
 }
 
 const HEARTBEAT_INTERVAL_MS = 30_000;
@@ -152,9 +153,10 @@ export function useWsDebug() {
       const initMsg = JSON.stringify({
         type: 'connection_init',
         payload: {
-          accessToken:   opts.accessToken,
           language:      opts.language || 'en',
-          lockdownToken: opts.lockdownToken || '',
+          ...(opts.loggedIn
+            ? { accessToken: opts.authToken || '' }
+            : { lockdownToken: opts.lockdownToken || '' }),
         },
       });
       sendRaw(ws, initMsg);

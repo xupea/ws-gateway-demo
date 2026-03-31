@@ -38,7 +38,8 @@ export default function WsDebugger() {
 
   // 连接参数
   const [wsUrl, setWsUrl]             = useState('ws://localhost:3000/ws');
-  const [accessToken, setAccessToken] = useState('b3f8cf666a18af715a6d2cc4e25a3220c5de420a761be2e23b2d3de0f071bbed1630c255b8bbabcfc4d8fdd396ce5ee5');
+  const [loggedIn, setLoggedIn]       = useState(true);
+  const [authToken, setAuthToken]     = useState('b3f8cf666a18af715a6d2cc4e25a3220c5de420a761be2e23b2d3de0f071bbed1630c255b8bbabcfc4d8fdd396ce5ee5');
   const [language, setLanguage]       = useState('en');
   const [lockdownToken, setLockdown]  = useState('s5MNWtjTM5TvCMkAzxov');
 
@@ -70,7 +71,13 @@ export default function WsDebugger() {
     if (isConnected) {
       disconnect();
     } else {
-      connect({ wsUrl, accessToken, language, lockdownToken });
+      connect({
+        wsUrl,
+        loggedIn,
+        authToken: loggedIn ? authToken : undefined,
+        lockdownToken: loggedIn ? undefined : lockdownToken,
+        language,
+      });
     }
   };
 
@@ -106,27 +113,44 @@ export default function WsDebugger() {
             {isConnected ? 'Disconnect' : 'Connect'}
           </button>
         </div>
+        <label className="inline-flex items-center gap-3 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={loggedIn}
+            onChange={(e) => setLoggedIn(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-blue-500 focus:ring-blue-400"
+          />
+          Logged In
+        </label>
 
-        <input
-          className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-          value={accessToken}
-          onChange={(e) => setAccessToken(e.target.value)}
-          placeholder="accessToken"
-        />
+        {loggedIn ? (
+          <input
+            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
+            value={authToken}
+            onChange={(e) => setAuthToken(e.target.value)}
+            placeholder="authToken"
+          />
+        ) : (
+          <input
+            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
+            value={lockdownToken}
+            onChange={(e) => setLockdown(e.target.value)}
+            placeholder="lockdownToken"
+          />
+        )}
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <input
             className="bg-gray-800 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
             placeholder="language (en)"
           />
-          <input
-            className="bg-gray-800 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-            value={lockdownToken}
-            onChange={(e) => setLockdown(e.target.value)}
-            placeholder="lockdownToken"
-          />
+          <div className="rounded border border-gray-800 bg-gray-900 px-3 py-2 text-xs text-gray-400">
+            {loggedIn
+              ? 'Will send connection_init.payload.accessToken'
+              : 'Will send connection_init.payload.lockdownToken'}
+          </div>
         </div>
       </section>
 

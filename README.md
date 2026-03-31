@@ -39,7 +39,7 @@ npm run dev
 
 页面打开后可以直接：
 
-1. 填写 WebSocket 地址、`accessToken` 或 `lockdownToken`
+1. 填写 WebSocket 地址，并根据是否登录选择 `authToken` 或 `lockdownToken`
 2. 点击 `Connect`
 3. 等待服务端返回 `connection_ack`
 4. 选择 topic 并点击 `Subscribe`
@@ -50,6 +50,8 @@ npm run dev
 当前 demo 默认模拟生产环境中的基础连接策略：
 
 - 建连成功后自动发送 `connection_init`
+- 勾选 `Logged In` 时发送 `payload.accessToken`
+- 未勾选 `Logged In` 时发送 `payload.lockdownToken`
 - 收到 `connection_ack` 后，连接进入可用状态
 - 每 30 秒自动发送一次 `ping`
 - 如果连接断开，会自动重连
