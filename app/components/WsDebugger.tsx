@@ -6,6 +6,7 @@ import { useWsDebug, ConnectionStatus } from '../hooks/useWsDebug';
 const STATUS_STYLE: Record<ConnectionStatus, string> = {
   disconnected: 'bg-gray-400',
   connecting:   'bg-yellow-400 animate-pulse',
+  reconnecting: 'bg-orange-400 animate-pulse',
   connected:    'bg-yellow-400 animate-pulse',
   initialized:  'bg-green-400',
   error:        'bg-red-500',
@@ -14,6 +15,7 @@ const STATUS_STYLE: Record<ConnectionStatus, string> = {
 const STATUS_LABEL: Record<ConnectionStatus, string> = {
   disconnected: 'Disconnected',
   connecting:   'Connecting...',
+  reconnecting: 'Reconnecting...',
   connected:    'Connected (waiting ack)',
   initialized:  'Initialized',
   error:        'Error',
@@ -28,13 +30,14 @@ const LOG_STYLE = {
 export default function WsDebugger() {
   const {
     status, logs, subscriptions,
+    reconnectAttempt,
     connect, disconnect,
     sendMessage, subscribe, unsubscribe, ping,
     clearLogs,
   } = useWsDebug();
 
   // 连接参数
-  const [wsUrl, setWsUrl]             = useState('ws://localhost:3001/ws');
+  const [wsUrl, setWsUrl]             = useState('ws://localhost:3000/ws');
   const [accessToken, setAccessToken] = useState('b3f8cf666a18af715a6d2cc4e25a3220c5de420a761be2e23b2d3de0f071bbed1630c255b8bbabcfc4d8fdd396ce5ee5');
   const [language, setLanguage]       = useState('en');
   const [lockdownToken, setLockdown]  = useState('s5MNWtjTM5TvCMkAzxov');
@@ -131,6 +134,10 @@ export default function WsDebugger() {
       <div className="flex items-center gap-2 mb-4 text-xs">
         <span className={`inline-block w-2 h-2 rounded-full ${STATUS_STYLE[status]}`} />
         <span className="text-gray-400">{STATUS_LABEL[status]}</span>
+        {status === 'reconnecting' && reconnectAttempt > 0 && (
+          <span className="text-orange-300">attempt {reconnectAttempt}</span>
+        )}
+        <span className="text-gray-500">auto reconnect + 30s heartbeat</span>
       </div>
 
       {/* ── 日志 ── */}
