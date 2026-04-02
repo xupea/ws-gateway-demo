@@ -247,6 +247,13 @@ export function useWsDebug() {
       addLog('system', 'Connection not ready');
       return '';
     }
+
+    const exists = desiredSubscriptionsRef.current.some((item) => item.topic === topic);
+    if (exists) {
+      addLog('system', `Already subscribed to ${topic}`);
+      return '';
+    }
+
     const id = generateId();
     const msg = JSON.stringify({ id, type: 'subscribe', payload: topic });
     sendRaw(wsRef.current, msg);
